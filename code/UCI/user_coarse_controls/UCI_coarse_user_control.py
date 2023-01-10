@@ -98,8 +98,8 @@ for pair in train_list:
 # severe filter bubbles: users' interaction distribution over categories has a small distance (<0.5) with that of the group.
 test_user_list = np.load(args.data_path+args.dataset+'/test_coarse_user_disLess0.5.npy', allow_pickle=True).tolist()
 
-model = torch.load('{}{}_best.pth'.format(args.model_path, file_head))
-model.cuda()
+model = torch.load('{}{}_best.pth'.format(args.model_path, file_head), map_location=torch.device('cpu'))
+model.to('cpu')
 model.eval()
 
 alpha_list = [0.8, 1.0] # if alpha=1.0, FM/NFM-maskUF; elif alpha=0.8, UCI.

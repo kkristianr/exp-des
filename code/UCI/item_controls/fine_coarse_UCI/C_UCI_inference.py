@@ -19,7 +19,7 @@ from item_side_utils import *
 import random
 random_seed = 1
 torch.manual_seed(random_seed) # cpu
-torch.cuda.manual_seed(random_seed) #gpu
+#torch.cuda.manual_seed(random_seed) #gpu
 np.random.seed(random_seed) #numpy
 random.seed(random_seed) #random and transforms
 torch.backends.cudnn.deterministic=True # cudnn
@@ -164,12 +164,12 @@ elif args.dataset == 'amazon_book':
 else:
     print('not implement')
     
-FM_model = torch.load('{}{}_best.pth'.format(args.FM_model_path, FM_file_head))
-FM_model.cuda()
+FM_model = torch.load('{}{}_best.pth'.format(args.FM_model_path, FM_file_head), map_location=torch.device('cpu'))
+FM_model.to('cpu')
 FM_model.eval()
 
-test_model = torch.load('{}/{}.pth'.format(args.TCP_model_path, file_head))
-test_model.cuda()
+test_model = torch.load('{}/{}.pth'.format(args.TCP_model_path, file_head), map_location=torch.device('cpu'))
+test_model.to('cpu')
 test_model.eval()
 test_user_list = []
 for user in user_mask_main:
@@ -177,7 +177,7 @@ for user in user_mask_main:
     for mask in user_mask_main[user]:
         his_dis[mask] = 0
     test_user_list.append(his_dis)
-test_user_list = torch.tensor(test_user_list).cuda()
+test_user_list = torch.tensor(test_user_list).to('cpu')
 # get the predictions of target categories.
 X_pred = test_model(test_user_list).cpu().detach().numpy()
 
@@ -228,8 +228,8 @@ if args.dataset == 'amazon_book':
         if len(item_category[itemID])>1:
             print('Error! more than one label in amazon book')
         item_cate.append(item_category[itemID][0])
-    item_cate = torch.tensor(item_cate).cuda().view(len(item_feature), 1)
-    item_cate_one_hot = torch.zeros(len(item_feature), len(category_list)).cuda().scatter_(1, item_cate, 1)
+    item_cate = torch.tensor(item_cate).to('cpu').view(len(item_feature), 1)
+    item_cate_one_hot = torch.zeros(len(item_feature), len(category_list)).to('cpu').scatter_(1, item_cate, 1)
 
 k_list = [1, 2, 3, 4, 5]
 alpha_list = [0.6, 0.7, 0.8, 0.9, 1.0]
@@ -293,8 +293,8 @@ for alpha in alpha_list:
                 predictions = user_pred_dict[userID]
 
                 if args.dataset == 'amazon_book_only_first':
-                    predictions = torch.sigmoid(torch.tensor(predictions).cuda())
-                    cate_weights = torch.tensor(user_estimate_weights[userID]).cuda()
+                    predictions = torch.sigmoid(torch.tensor(predictions).to('cpu'))
+                    cate_weights = torch.tensor(user_estimate_weights[userID]).to('cpu')
                     weights = torch.matmul(item_cate_one_hot, cate_weights).view(-1)
                     predictions = predictions + beta * weights                    
                 else:
@@ -305,8 +305,8 @@ for alpha in alpha_list:
                             weights += user_estimate_weights[userID][cate]
                         reg_list.append(beta*weights/len(item_category[itemID]))
 
-                    predictions = torch.sigmoid(torch.tensor(predictions).cuda())
-                    reg_list = torch.tensor(reg_list).cuda()
+                    predictions = torch.sigmoid(torch.tensor(predictions).to('cpu'))
+                    reg_list = torch.tensor(reg_list).to('cpu')
                     predictions = predictions + reg_list
                 
                 _, indices = torch.topk(predictions, eval(args.topN)[1])

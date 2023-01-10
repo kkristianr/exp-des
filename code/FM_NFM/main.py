@@ -19,7 +19,7 @@ import pandas as pd
 import random
 random_seed = 1
 torch.manual_seed(random_seed) # cpu
-torch.cuda.manual_seed(random_seed) #gpu
+#torch.cuda.manual_seed(random_seed) #gpu
 np.random.seed(random_seed) #numpy
 random.seed(random_seed) #random and transforms
 torch.backends.cudnn.deterministic=True # cudnn
@@ -150,13 +150,13 @@ print('data ready. costs ' + time.strftime("%H: %M: %S", time.gmtime(time.time()
 if args.pre_train and args.model=='NFM':
     assert os.path.exists(args.pre_train_model_path), 'lack of FM model'
     assert args.model == 'NFM', 'only support NFM for now'
-    FM_model = torch.load(args.pre_train_model_path)
+    FM_model = torch.load(args.pre_train_model_path, map_location=torch.device('cpu'))
 else:
     FM_model = None
 
 if args.model == 'FM':
     if args.pre_train: # pre-trained model on iid
-        model = torch.load(args.pre_train_model_path)
+        model = torch.load(args.pre_train_model_path, map_location=torch.device('cpu'))
     else:
         model = model.FM(num_features, args.hidden_factor,
                     args.batch_norm, eval(args.dropout))
@@ -167,7 +167,7 @@ elif args.model == 'NFM':
 else:
     raise Exception('model not implemented!')
     
-model.cuda()
+model.to('cpu')
 if args.optimizer == 'Adagrad':
     optimizer = optim.Adagrad(
         model.parameters(), lr=args.lr, initial_accumulator_value=1e-8)
@@ -202,9 +202,9 @@ for epoch in range(args.epochs):
     train_loader.dataset.ng_sample()
     
     for features, feature_values, label in train_loader:
-        features = features.cuda()
-        feature_values = feature_values.cuda()
-        label = label.cuda()
+        features = features.to('cpu')
+        feature_values = feature_values.to('cpu')
+        label = label.to('cpu')
 
         model.zero_grad()
         prediction = model(features, feature_values)

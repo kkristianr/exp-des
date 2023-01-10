@@ -93,8 +93,8 @@ for pair in train_list:
         train_dict_all[userID] = []
     train_dict_all[userID].append(itemID)
 
-model = torch.load('{}{}_best.pth'.format(args.model_path, file_head))
-model.cuda()
+model = torch.load('{}{}_best.pth'.format(args.model_path, file_head), map_location=torch.device('cpu'))
+model.to('cpu')
 model.eval()
 
 _, test_result, user_pred_dict, user_item_top1k = evaluate.Ranking(model, valid_dict, test_dict,\

@@ -26,7 +26,7 @@ class MLP(nn.Module):
         elif act_function == 'sigmoid':
             self.act_function = F.sigmoid
 
-        self.mask = torch.unsqueeze(torch.ones(cate_num, cate_num) - torch.eye(cate_num, cate_num), 1).cuda()
+        self.mask = torch.unsqueeze(torch.ones(cate_num, cate_num) - torch.eye(cate_num, cate_num), 1).to('cpu')
 
         MLP_module = []
         in_dim = self.hidden_dims[0]

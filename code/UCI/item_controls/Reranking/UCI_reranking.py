@@ -109,8 +109,9 @@ item_map_dict_reverse = {v: k for k, v in item_map_dict.items()}
 print('All predicted users\' number is ' + str(len(user_mask_main)))
 
 # before reranking. used to obtain the user-item scores 
-model = torch.load('{}{}_best.pth'.format(args.model_path, file_head))
-model.cuda()
+model = torch.load('{}{}_best.pth'.format(args.model_path, file_head), map_location=torch.device('cpu'))
+
+model.to('cpu')
 model.eval()
 
 _, test_result, user_pred_dict, user_item_top1k = evaluate.Ranking(model, valid_dict, test_dict,\
@@ -202,8 +203,8 @@ for beta in beta_list:
             else:
                 reg_list.append(beta)
             
-        predictions = torch.sigmoid(torch.tensor(predictions).cuda())
-        reg_list = torch.tensor(reg_list).cuda()
+        predictions = torch.sigmoid(torch.tensor(predictions).to('cpu'))
+        reg_list = torch.tensor(reg_list).to('cpu')
         predictions = predictions + reg_list
         _, indices = torch.topk(predictions, eval(args.topN)[-1])
         indices = indices.cpu().numpy().tolist()

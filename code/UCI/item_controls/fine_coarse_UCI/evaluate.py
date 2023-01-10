@@ -6,9 +6,9 @@ import time
 def RMSE(model, model_name, dataloader):
     RMSE = np.array([], dtype=np.float32)
     for features, feature_values, label in dataloader:
-        features = features.cuda()
-        feature_values = feature_values.cuda()
-        label = label.cuda()
+        features = features.to('cpu')
+        feature_values = feature_values.to('cpu')
+        label = label.to('cpu')
 
         prediction = model(features, feature_values)
         prediction = prediction.clamp(min=-1.0, max=1.0)
@@ -27,8 +27,8 @@ def pre_ranking(item_feature):
         features.append(np.array(item_feature[itemID][0]))
         feature_values.append(np.array(item_feature[itemID][1], dtype=np.float32))
 
-    features = torch.tensor(features).cuda()
-    feature_values = torch.tensor(feature_values).cuda()
+    features = torch.tensor(features).to('cpu')
+    feature_values = torch.tensor(feature_values).to('cpu')
     
     return features, feature_values
 
@@ -37,18 +37,18 @@ def selected_concat(user_feature, all_item_features, all_item_feature_values, us
     item_num = len(batch_item_idx)
 
     test = user_feature[userID][0]
-    user_feat = torch.tensor(user_feature[userID][0]).cuda()
+    user_feat = torch.tensor(user_feature[userID][0]).to('cpu')
 
     user_feat = user_feat.expand(item_num, -1)
-    user_feat_values = torch.tensor(np.array(user_feature[userID][1], dtype=np.float32)).cuda()
+    user_feat_values = torch.tensor(np.array(user_feature[userID][1], dtype=np.float32)).to('cpu')
     user_feat_values = user_feat_values.expand(item_num, -1)
 
-    batch_item_idx = torch.tensor(batch_item_idx).cuda()
+    batch_item_idx = torch.tensor(batch_item_idx).to('cpu')
     batch_item_features = all_item_features[batch_item_idx]
     batch_item_feature_values = all_item_feature_values[batch_item_idx]
 
-    features = torch.cat([user_feat, batch_item_features], 1).cuda()
-    feature_values = torch.cat([user_feat_values, batch_item_feature_values], 1).cuda()
+    features = torch.cat([user_feat, batch_item_features], 1).to('cpu')
+    feature_values = torch.cat([user_feat_values, batch_item_feature_values], 1).to('cpu')
 
     return features, feature_values
 
@@ -68,13 +68,13 @@ def Ranking(model, valid_dict, test_dict, train_dict, user_feature, all_item_fea
 
         batch_num = all_item_features.size(0) // batch_size
         item_idx = list(range(all_item_features.size(0)))
-        mask = torch.zeros(all_item_features.size(0)).cuda()
-        his_items = torch.tensor(train_dict[userID]).cuda()
+        mask = torch.zeros(all_item_features.size(0)).to('cpu')
+        his_items = torch.tensor(train_dict[userID]).to('cpu')
         mask[his_items] = -999
         if is_test == True:
             mask_valid_item = [item_map_dict[itemID] for itemID in valid_dict[userID]]
             if len(mask_valid_item) > 0:
-                mask_valid_item = torch.tensor(mask_valid_item).cuda()
+                mask_valid_item = torch.tensor(mask_valid_item).to('cpu')
                 mask[mask_valid_item] = -999
                 
         st, ed = 0, batch_size

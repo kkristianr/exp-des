@@ -93,8 +93,8 @@ for pair in train_list:
         train_dict_all[userID] = []
     train_dict_all[userID].append(itemID)
 
-model = torch.load('{}{}_best.pth'.format(args.model_path, file_head))
-model.cuda()
+model = torch.load('{}{}_best.pth'.format(args.model_path, file_head), map_location=torch.device('cpu'))
+model.to('cpu')
 model.eval()
 
 alpha_list = [0.8, 0.9, 1.0] # if alpha=1.0, FM/NFM-changeUF; else, UCI.

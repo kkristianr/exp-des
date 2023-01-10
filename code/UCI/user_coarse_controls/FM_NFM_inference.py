@@ -102,8 +102,8 @@ test_user_list = np.load(args.data_path+args.dataset+'/test_coarse_user_disLess0
 print('All predicted users\' number is ' + str(len(test_user_list)))
 
 # before reranking. used to obtain the user-item scores 
-model = torch.load('{}{}_best.pth'.format(args.model_path, file_head))
-model.cuda()
+model = torch.load('{}{}_best.pth'.format(args.model_path, file_head), map_location=torch.device('cpu'))
+model.to('cpu')
 model.eval()
 _, test_result, user_pred_dict, user_item_top1k = evaluate.Ranking(model, valid_dict, test_dict,\
                          train_dataset.train_dict, user_feature, all_item_features, all_item_feature_values,\

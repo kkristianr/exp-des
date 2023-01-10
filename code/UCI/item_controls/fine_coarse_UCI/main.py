@@ -18,7 +18,7 @@ from item_side_utils import *
 import random
 random_seed = 1
 torch.manual_seed(random_seed) # cpu
-torch.cuda.manual_seed(random_seed) #gpu
+#torch.cuda.manual_seed(random_seed) #gpu
 np.random.seed(random_seed) #numpy
 random.seed(random_seed) #random and transforms
 torch.backends.cudnn.deterministic=True # cudnn
@@ -105,13 +105,13 @@ user_list = []
 for user in user_mask_main:
     user_list.append(user_distribution_dict_2P[user][0])
 user_list = np.array(user_list, dtype=np.float32)
-data = torch.tensor(user_list).cuda()
+data = torch.tensor(user_list).to('cpu')
 
 user_target_list = []
 for user in user_mask_main:
     user_target_list.append(user_distribution_dict_2P[user][1])
 user_target_list = np.array(user_target_list, dtype=np.float32)
-data_label = torch.tensor(user_target_list).cuda()
+data_label = torch.tensor(user_target_list).to('cpu')
 
 sample_num = len(user_list)
 
@@ -121,12 +121,12 @@ for user in user_mask_main:
     for mask in user_mask_main[user]:
         his_dis[mask] = 0
     test_user_list.append(his_dis)
-test_user_list = torch.tensor(test_user_list).cuda()
+test_user_list = torch.tensor(test_user_list).to('cpu')
 
 hidden_dims = [cate_num] + eval(args.layers) + [1]
 model = model.MLP(cate_num=cate_num, hidden_dims=hidden_dims, \
                   batch_norm=args.batch_norm, drop_prob=args.dropout, act_function=args.act_function)
-model.cuda()
+model.to('cpu')
 
 if args.optimizer == 'Adagrad':
     optimizer = optim.Adagrad(model.parameters(), lr=args.lr, initial_accumulator_value=1e-8)
