@@ -196,75 +196,77 @@ file_head = '{}_{}_{}hidden_{}layer_{}lr_{}bs_{}dropout_{}lamda_{}bn_{}epoch_{}'
                         args.batch_size, args.dropout, args.lamda, args.batch_norm, args.epochs, args.log_name)
 
 print('begin training')
-for epoch in range(args.epochs):
-    model.train() # Enable dropout and batch_norm
-    start_time = time.time()
-    train_loader.dataset.ng_sample()
-    
-    for features, feature_values, label in train_loader:
-        features = features.to('cpu')
-        feature_values = feature_values.to('cpu')
-        label = label.to('cpu')
 
-        model.zero_grad()
-        prediction = model(features, feature_values)
-        loss = criterion(prediction, label)
-        loss += args.lamda * model.embeddings.weight.norm()
-        loss.backward()
-        optimizer.step()
-        # writer.add_scalar('data/loss', loss.item(), count)
-        count += 1
+if __name__ == '__main__':
+    for epoch in range(args.epochs):
+        model.train() # Enable dropout and batch_norm
+        start_time = time.time()
+        train_loader.dataset.ng_sample()
+        
+        for features, feature_values, label in train_loader:
+            features = features.to('cpu')
+            feature_values = feature_values.to('cpu')
+            label = label.to('cpu')
 
-    
-    if epoch % 10 == 0:
-        if epoch < 100:
-            continue
-            
-        model.eval()
-        train_RMSE = evaluate.RMSE(model, args.model, train_loader)
+            model.zero_grad()
+            prediction = model(features, feature_values)
+            loss = criterion(prediction, label)
+            loss += args.lamda * model.embeddings.weight.norm()
+            loss.backward()
+            optimizer.step()
+            # writer.add_scalar('data/loss', loss.item(), count)
+            count += 1
 
-        valid_result, _, _, _, _  = evaluate.Ranking(model, valid_dict, test_dict, train_dataset.train_dict,\
-                    user_feature, all_item_features, all_item_feature_values, 40000, eval(args.topN), item_map_dict, True)
-        _ , test_result, user_pred_dict, user_item_top1k, top_values = evaluate.Ranking(model, valid_dict, test_dict,\
-                    train_dataset.train_dict, user_feature, all_item_features, all_item_feature_values, \
-                    40000, eval(args.topN), item_map_dict, True, is_test=True)
-        print('---'*18)
-        print("Runing Epoch {:03d} ".format(epoch) + 'loss {:.4f}'.format(loss) + " costs " + time.strftime(
-                            "%H: %M: %S", time.gmtime(time.time()-start_time)))
-        evaluate.print_results(train_RMSE, valid_result, test_result)
+        
+        if epoch % 10 == 0:
+            if epoch < 100:
+                continue
+                
+            model.eval()
+            train_RMSE = evaluate.RMSE(model, args.model, train_loader)
 
-#         if epoch %100 == 0:
-#             torch.save(model, '{}{}_nowepoch_{}.pth'.format(args.model_path, file_head, epoch))
+            valid_result, _, _, _, _  = evaluate.Ranking(model, valid_dict, test_dict, train_dataset.train_dict,\
+                        user_feature, all_item_features, all_item_feature_values, 40000, eval(args.topN), item_map_dict, True)
+            _ , test_result, user_pred_dict, user_item_top1k, top_values = evaluate.Ranking(model, valid_dict, test_dict,\
+                        train_dataset.train_dict, user_feature, all_item_features, all_item_feature_values, \
+                        40000, eval(args.topN), item_map_dict, True, is_test=True)
+            print('---'*18)
+            print("Runing Epoch {:03d} ".format(epoch) + 'loss {:.4f}'.format(loss) + " costs " + time.strftime(
+                                "%H: %M: %S", time.gmtime(time.time()-start_time)))
+            evaluate.print_results(train_RMSE, valid_result, test_result)
 
-        if valid_result[1][0] > best_recall: # recall@10 for selection
-            best_recall, best_epoch = valid_result[1][0], epoch
-            best_test_result = test_result
-            best_user_item_top1k = user_item_top1k
-            best_top_values = top_values
-            print("------------Best model, saving...------------")
-            if args.out:
-                if not os.path.exists(args.model_path):
-                    os.mkdir(args.model_path)
-                torch.save(model, '{}{}_best.pth'.format(args.model_path, file_head))
+    #         if epoch %100 == 0:
+    #             torch.save(model, '{}{}_nowepoch_{}.pth'.format(args.model_path, file_head, epoch))
 
-print("End. Best epoch {:03d}".format(best_epoch))
-evaluate.print_results(None, None, best_test_result)
+            if valid_result[1][0] > best_recall: # recall@10 for selection
+                best_recall, best_epoch = valid_result[1][0], epoch
+                best_test_result = test_result
+                best_user_item_top1k = user_item_top1k
+                best_top_values = top_values
+                print("------------Best model, saving...------------")
+                if args.out:
+                    if not os.path.exists(args.model_path):
+                        os.mkdir(args.model_path)
+                    torch.save(model, '{}{}_best.pth'.format(args.model_path, file_head))
+
+    print("End. Best epoch {:03d}".format(best_epoch))
+    evaluate.print_results(None, None, best_test_result)
 
 
-rec_result_file = '{}{}_top{}_result.npy'.format(args.rec_result_path, file_head, eval(args.topN)[-1])
-score_name = '{}{}_top{}_score.npy'.format(args.rec_result_path, file_head, eval(args.topN)[-1])
+    rec_result_file = '{}{}_top{}_result.npy'.format(args.rec_result_path, file_head, eval(args.topN)[-1])
+    score_name = '{}{}_top{}_score.npy'.format(args.rec_result_path, file_head, eval(args.topN)[-1])
 
-np.save(rec_result_file, best_user_item_top1k)
-np.save(score_name, np.array(best_top_values))
+    np.save(rec_result_file, best_user_item_top1k)
+    np.save(score_name, np.array(best_top_values))
 
-print('----------------------')
-print('score_file:')
-print(score_name)
-print('----------------------')
-print('rec result file:')
-print(rec_result_file)
-print('----------------------')
-print('best model file:')
-print('{}{}_best_opt.pth'.format(args.model_path, file_head))
-print('----------------------')
-print('finish saving')
+    print('----------------------')
+    print('score_file:')
+    print(score_name)
+    print('----------------------')
+    print('rec result file:')
+    print(rec_result_file)
+    print('----------------------')
+    print('best model file:')
+    print('{}{}_best_opt.pth'.format(args.model_path, file_head))
+    print('----------------------')
+    print('finish saving')
