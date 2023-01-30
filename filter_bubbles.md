@@ -39,9 +39,9 @@ Change the default path by changing the default parameter with the following pat
 ./../../data/
 ```
 
-##Install OpenPyxl
-
+### Install OpenPyxl
+```
 pip install openpyxl
-
+```
 
 
