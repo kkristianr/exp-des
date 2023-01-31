@@ -47,7 +47,7 @@ def selected_concat(user_feature, all_item_features, all_item_feature_values, us
     batch_item_features = all_item_features[batch_item_idx]
     batch_item_feature_values = all_item_feature_values[batch_item_idx]
 
-    features = torch.cat([user_feat, batch_item_features], 1).to('cpu')
+    features = torch.cat([user_feat, batch_item_features.type(torch.LongTensor)], 1).to('cpu')
     feature_values = torch.cat([user_feat_values, batch_item_feature_values], 1).to('cpu')
 
     return features, feature_values
