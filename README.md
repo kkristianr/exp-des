@@ -1,18 +1,24 @@
-# User-controllable Recommendation Against Filter Bubbles
+# Reproducing "User-controllable Recommendation Against Filter Bubbles"
 
 
-This is the pytorch implementation of our paper at SIGIR 2022:
+This is a reproducibility attempt of the following paper:
 
 > [User-controllable Recommendation Against Filter Bubbles](https://arxiv.org/abs/2204.13844)
 >
 > Wenjie Wang, Fuli Feng, Liqiang Nie, Tat-Seng Chua.
 
+The advantages of our experiment: 
+- Code requires only CPU instead of GPU 
+- No CUDA driver needed
+- Supported documentation for setting up the experiment 
+- New requirements.txt to support installation of packages
+- Analysis of the outcomes and suggestions on improvement 
+
+
 ## Environment
 
 - Anaconda 3
 - python 3.7.3
-- pytorch 1.4.0
-- numpy 1.16.4
 
 ## Usage
 
