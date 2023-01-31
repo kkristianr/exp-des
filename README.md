@@ -7,6 +7,8 @@ This is a reproducibility attempt of the following paper:
 >
 > Wenjie Wang, Fuli Feng, Liqiang Nie, Tat-Seng Chua.
 
+REPRODUCED RESULTS CAN BE FOUND IN: reproduced_results.md 
+
 The advantages of our experiment: 
 - Code requires only CPU instead of GPU 
 - No CUDA driver needed
