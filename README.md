@@ -16,9 +16,16 @@ The advantages of our experiment:
 
 
 ## Environment
+Anancoda 2.1.x is a requirement for this project. Make sure to install it and use Conda for installing other requirements.
 
-- Anaconda 3
-- python 3.7.3
+First of all, downgrade Python to 3.7.x version, it is necessary in order to install other frameworks.
+
+Install necessary packages. 
+```
+pip install -r requirements.txt
+```
+
+
 
 ## Usage
 
