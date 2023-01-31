@@ -1,18 +1,31 @@
-# User-controllable Recommendation Against Filter Bubbles
+# Reproducing "User-controllable Recommendation Against Filter Bubbles"
 
 
-This is the pytorch implementation of our paper at SIGIR 2022:
+This is a reproducibility attempt of the following paper:
 
 > [User-controllable Recommendation Against Filter Bubbles](https://arxiv.org/abs/2204.13844)
 >
 > Wenjie Wang, Fuli Feng, Liqiang Nie, Tat-Seng Chua.
 
-## Environment
+The advantages of our experiment: 
+- Code requires only CPU instead of GPU 
+- No CUDA driver needed
+- Supported documentation for setting up the experiment 
+- New requirements.txt to support installation of packages
+- Analysis of the outcomes and suggestions for improvement 
 
-- Anaconda 3
-- python 3.7.3
-- pytorch 1.4.0
-- numpy 1.16.4
+
+## Environment
+Anancoda 2.1.x is a requirement for this project. Make sure to install it and use Conda for installing other requirements.
+
+First of all, downgrade Python to 3.7.x version, it is necessary in order to install other frameworks.
+
+Install necessary packages. 
+```
+pip install -r requirements.txt
+```
+
+This code uses only CPU functions instead of CUDA functions from the original experiment. All paths are relative and not absolute anymore. 
 
 ## Usage
 
