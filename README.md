@@ -12,7 +12,7 @@ The advantages of our experiment:
 - No CUDA driver needed
 - Supported documentation for setting up the experiment 
 - New requirements.txt to support installation of packages
-- Analysis of the outcomes and suggestions on improvement 
+- Analysis of the outcomes and suggestions for improvement 
 
 
 ## Environment
@@ -25,7 +25,7 @@ Install necessary packages.
 pip install -r requirements.txt
 ```
 
-
+This code uses only CPU functions instead of CUDA functions from the original experiment. All paths are relative and not absolute anymore. 
 
 ## Usage
 
