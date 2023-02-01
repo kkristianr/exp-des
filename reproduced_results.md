@@ -99,3 +99,6 @@ Performance comparison between UCI and the baseline under the fine-grained user-
 | FM-F-UCI  | w/ CI    | 0,2095 | 0,1704 | 0,1792 | 0,3544 | 1   | 8,0712   |
 | NFM-F-UCI | w/o CI   | 0,2094 | 0,1687 | 0,1775 | 0,3525 | 1   | 8,016    |
 | NFM-F-UCI | w/ CI    | 0,2125 | 0,1729 | 0,182  | 0,3319 | 1   | 8,2299   |
+
+## Figure 6 
+![Figures 6 from paper](https://github.com/kkristianr/exp-des/blob/main/figures/Figure%206.png?raw=true)
