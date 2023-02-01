@@ -57,12 +57,15 @@ cd item_controls/Reranking
 python UCI_reranking.py --model=FM --dataset=ml_1m
 ```
 
+
 - Fine-grained and coarse-grained item-feature controls
 ```
 cd item_controls/fine_coarse_UCI
 python C_UCI_inference.py --model=FM --dataset=ml_1m
 python F_UCI_inference.py --model=NFM --dataset=amazon_book
 ```
+![Table 4 from paper](https://github.com/kkristianr/exp-des/blob/main/figures/Table%204.png?raw=true)
+
 
 #### user-feature coarse-grained controls
 - UCI and maskUF for FM and NFM
@@ -70,6 +73,7 @@ python F_UCI_inference.py --model=NFM --dataset=amazon_book
 cd user_coarse_controls
 python UCI_coarse_user_control.py --model=FM
 ```
+Results are visible in reproduced_results.md 
 
 - Inference for vanilla FM and NFM
 ```
@@ -84,11 +88,14 @@ cd user_fine_controls
 python UCI_fine_user_control.py --model=FM
 ```
 
+Results are visible in reproduced_results.md 
+
 - Inference for vanilla FM and NFM
 ```
 python FM_NFM_inference.py --model=FM
 ```
 
+![Table 5 from paper](https://github.com/kkristianr/exp-des/blob/main/figures/Table%205.png?raw=true)
 
 ## Acknowledgment
 
